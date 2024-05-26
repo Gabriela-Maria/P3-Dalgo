@@ -17,8 +17,8 @@ public class P3 {
                 if (flips.isEmpty()) {
                     System.out.println("ORDENADO");
                 } else {
-                    flips.forEach(flip -> System.out.print(flip + " "));
-                    System.out.println();
+                    //flips.forEach(flip -> System.out.print(flip + " "));
+                    System.out.println(flips.size());
                 }
             }
             scanner.close();
