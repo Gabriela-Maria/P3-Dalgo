@@ -236,14 +236,13 @@ def process_input_file(input_file, output_file):
             num_flips = sorter.flip_pancakes_while_good_far_links()
             flips_list = sorter.get_flips_list()
             print (num_flips)
-            if (num_flips == 1):
+            if (num_flips == 1 and flips_list == "0"):
                 outfile.write("ORDENADO\n")
-                print("SE HA ESCRITO EN EL P3.OUT")
             elif (num_flips == 0):
                 outfile.write("0\n")
             else:
                 outfile.write(f"{flips_list} 0\n")
-                print("SE HA ESCRITO EN EL P3.OUT")
+    print("SE HA ESCRITO EN EL P3.OUT")
 
 
 # Especificar los nombres de los archivos de entrada y salida
