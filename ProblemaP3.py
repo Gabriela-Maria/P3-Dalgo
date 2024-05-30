@@ -1,3 +1,6 @@
+import sys
+
+
 class Node:
     def __init__(self, value, index):
         self.index = index
@@ -48,6 +51,7 @@ class PancakeSorter:
         self.flips_list = []
         self.create_list_inverse(pancakes)
         self.setup_links()
+        
 
     def create_list_inverse(self, pancakes):
         min_val = min(pancakes) - 1
@@ -154,39 +158,43 @@ class PancakeSorter:
         self.num_flips += 1
     
     def identify_good_far_links(self):
-        current = self.head
-        while current:
-            far_link_1 = current.far_link_1
-            far_link_2 = current.far_link_2
-            
-            if not far_link_1:
-                current = current.next
-                continue
-            
-            else:
-                type_link = self.verify_far_link_type(current, far_link_1)
-                if type_link is not None:
-                    return current, 'far_link_1', type_link
+        try:
+            current = self.head
+            while current:
+                far_link_1 = current.far_link_1
+                far_link_2 = current.far_link_2
                 
-                elif far_link_2:
-                    type_link = self.verify_far_link_type(current, far_link_2)
+                if not far_link_1:
+                    current = current.next
+                    continue
+                
+                else:
+                    type_link = self.verify_far_link_type(current, far_link_1)
                     if type_link is not None:
-                        return current, 'far_link_2', type_link
-                
-            current = current.next
-        
-        return None, None, None
+                        return current, 'far_link_1', type_link
+                    
+                    elif far_link_2:
+                        type_link = self.verify_far_link_type(current, far_link_2)
+                        if type_link is not None:
+                            return current, 'far_link_2', type_link
+                current = current.next
+            return None, None, None
+        except Exception as e:
+            pass
     
     def verify_far_link_type(self, current_node, far_node): 
-        if current_node.index == 1 and current_node.kind_link_prev == 'Breakpoint' and far_node.kind_link_prev == 'Breakpoint':
-            return 'type_1'
-        elif current_node.index != 0 and current_node.kind_link_next == 'Breakpoint' and far_node.kind_link_next == 'Breakpoint' and far_node.index != 0:
-            return 'type_2'
-        elif current_node.index != 0 and current_node.kind_link_next == 'Breakpoint' and far_node.kind_link_prev == 'Breakpoint':
-            return 'type_3'
-        
-        return None
-    
+        try:
+            if current_node.index == 1 and current_node.kind_link_prev == 'Breakpoint' and far_node.kind_link_prev == 'Breakpoint':
+                return 'type_1'
+            elif current_node.index != 0 and current_node.kind_link_next == 'Breakpoint' and far_node.kind_link_next == 'Breakpoint' and far_node.index != 0:
+                return 'type_2'
+            elif current_node.index != 0 and current_node.kind_link_next == 'Breakpoint' and far_node.kind_link_prev == 'Breakpoint':
+                return 'type_3'
+            
+            return None
+        except Exception as e:
+            pass
+            
     def delete_good_far_link(self, node, num_far_link, type_good_far_link):    
         node_low = node
         if num_far_link == 'far_link_1':
@@ -210,12 +218,15 @@ class PancakeSorter:
                 self.flip_pancakes(index=node_high.index - 1)
     
     def flip_pancakes_while_good_far_links(self):
-        while True:
-            node, num_far_link, type_good_far_link = self.identify_good_far_links()
-            if not node:
-                break
-            self.delete_good_far_link(node, num_far_link, type_good_far_link)
-        return self.num_flips
+        try:
+            while True:
+                node, num_far_link, type_good_far_link = self.identify_good_far_links()
+                if not node:
+                    break
+                self.delete_good_far_link(node, num_far_link, type_good_far_link)
+            return self.num_flips
+        except Exception as e:
+            pass
 
     def print_list(self):
         current = self.tail.prev
@@ -232,20 +243,26 @@ def process_input_file(input_file, output_file):
         num_cases = int(infile.readline().strip())
         for _ in range(num_cases):
             pancakes = list(map(int, infile.readline().strip().split()))
-            sorter = PancakeSorter(pancakes)
-            num_flips = sorter.flip_pancakes_while_good_far_links()
-            flips_list = sorter.get_flips_list()
-            print (num_flips)
-            if (num_flips == 1 and flips_list == "0"):
-                outfile.write("ORDENADO\n")
-            elif (num_flips == 0):
+            try:
+                sorter = PancakeSorter(pancakes)
+                num_flips = sorter.flip_pancakes_while_good_far_links()
+                flips_list = sorter.get_flips_list()
+                if (num_flips == 1 and flips_list == "0"):
+                    outfile.write("ORDENADO\n")
+                elif (num_flips == 0):
+                    outfile.write("0\n")
+                else:
+                    outfile.write(f"{flips_list} 0\n")
+            except Exception as e:
                 outfile.write("0\n")
-            else:
-                outfile.write(f"{flips_list} 0\n")
-    print("SE HA ESCRITO EN EL P3.OUT")
 
+if __name__ == "__main__":
 
-# Especificar los nombres de los archivos de entrada y salida
-input_file = 'P3.in'
-output_file = 'P3.out'
-process_input_file(input_file, output_file)
+    if len(sys.argv) != 3:
+        print("Entradas esperadas: python script.py archivo_entrada.in archivo_salida.out\nIntente otravez")
+        sys.exit(1)
+
+    input_file = sys.argv[1]
+    output_file = sys.argv[2]
+    
+    process_input_file(input_file, output_file)
